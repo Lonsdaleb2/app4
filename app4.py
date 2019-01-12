@@ -21,7 +21,7 @@ server_time_check = datetime.datetime.now()
 
 @client.event
 async def on_ready():
-    await client.change_presence(game=Game(name="say #help"))
+    await client.change_presence(game=Game(name="say !help"))
     print("Logged in as " + client.user.name)
     print(client.user.name)
     print(client.user.id)
