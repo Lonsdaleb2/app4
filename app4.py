@@ -24,8 +24,8 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-    
-
+    global name_file
+    name_file = (open('male_npcs.txt').readlines())
 
 async def list_servers():
     await client.wait_until_ready()
@@ -1552,7 +1552,7 @@ class Universal:
                     pass_context=True)
     async def random_npc(self, context):
 
-        line = random.choice(open('male_npcs.txt').readlines())
+        line = random.choice(name_file)
         name_final = (line)
 
         gender = ["Male", "Female", "Androgynous"]
