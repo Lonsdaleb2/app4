@@ -21,7 +21,7 @@ server_time_check = datetime.datetime.now()
 
 @client.event
 async def on_ready():
-    await client.change_presence(game=Game(name="say !help"))
+    await client.change_presence(game=Game(name="say #help"))
     print("Logged in as " + client.user.name)
     print(client.user.name)
     print(client.user.id)
@@ -164,20 +164,20 @@ class MGT2e:
         await client.say(context.message.author.mention + "\n"
                          + "Please enter your worlds Trade Codes below separated by a space.\n")
         await asyncio.sleep(1)
-        user_input = await client.wait_for_message()
+        user_input = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         user_input_2 = user_input.content
         user_list = user_input_2.split()
 
         await client.say(context.message.author.mention + "\n"
                          + "What is your Broker skill modifier? -3/0/1/2...\n")
         await asyncio.sleep(1)
-        broker_entry_2 = await client.wait_for_message()
+        broker_entry_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         broker_entry = broker_entry_2.content
 
         await client.say(context.message.author.mention + "\n"
                          + "Are you looking for a black-market merchant? yes/no \n")
         await asyncio.sleep(1)
-        b_t_2 = await client.wait_for_message()
+        b_t_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         b_t = b_t_2.content
 
         if b_t == "no":
@@ -640,20 +640,20 @@ class MGT2e:
         await client.say(context.message.author.mention + "\n"
                          + "Please enter your worlds Trade Codes below, separated by a space.\n")
         await asyncio.sleep(1)
-        user_input_2 = await client.wait_for_message()
+        user_input_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         user_input = user_input_2.content
         user_list = user_input.split()
 
         await client.say(context.message.author.mention + "\n"
                          + "What is your Broker skill modifier?  -3/0/1/2... \n")
         await asyncio.sleep(1)
-        broker_entry_2 = await client.wait_for_message()
+        broker_entry_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         broker_entry = broker_entry_2.content
 
         await client.say(context.message.author.mention + "\n"
                          + "What good/s are you selling? \n Separate each entry with a space and use underscores for gaps within a name. Eg: Wood Illegal_Weapons \n")
         await asyncio.sleep(1)
-        arg_2 = await client.wait_for_message()
+        arg_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         arg = arg_2.content
         arg = arg.split()
         print(arg)
@@ -1009,14 +1009,14 @@ class Universal:
                     brief="!map - create or call a map",
                     aliases=["map"],
                     pass_context=True)
-    async def system_map(context):
+    async def system_map(self, context):
         earth_orb_time = 365  # how many days it takes for a full orbit of the sun
         print("Command fired")
 
         planet_start = 0  # degrees
 
         await client.say(context.message.author.mention + " Enter the system name/ID. Use underscores for spaces. ")
-        system_id_2 = await client.wait_for_message()
+        system_id_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         system_id = system_id_2.content
         system_list = []
         if system_id + ".p" not in str(glob.glob("*.p")):  # this section checks and finds the persistent file.
@@ -1025,36 +1025,36 @@ class Universal:
 
             await client.say(
                 context.message.author.mention + " Solar system does not yet exist. How many planets are in this system?")
-            number_of_planets_2 = await client.wait_for_message()
+            number_of_planets_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             number_of_planets = number_of_planets_2.content
             await client.say(
                 context.message.author.mention + " Do you want to - A: Enter the system data yourself? B: Use science to help generate it? A/B ")
-            check = await client.wait_for_message()
+            check = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             check = check.content
             if check.lower() == "a":
                 while x <= int(number_of_planets):
                     system_list.append(planet_start + random.randint(1, 359))
                     await client.say(context.message.author.mention + " How many days does planet number " + str(
                         x) + " take to orbit the sun?")
-                    days_of_rotation_2 = await client.wait_for_message()
+                    days_of_rotation_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                     days_of_rotation = days_of_rotation_2.content
                     system_list.append(days_of_rotation)
                     await client.say(context.message.author.mention + " How far away is planet number " + str(
                         x) + " from the sun? Use KM.")
-                    planet_distance_2 = await client.wait_for_message()
+                    planet_distance_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                     planet_distance = planet_distance_2.content
                     system_list.append(planet_distance)
                     x += 1
             elif check.lower() == "b":
                 await client.say(
                     context.message.author.mention + " What is the relative mass of the system's star? (Sol = 1)")
-                star_mass_2 = await client.wait_for_message()
+                star_mass_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                 star_mass = star_mass_2.content
                 while x <= int(number_of_planets):
                     system_list.append(planet_start + random.randint(1, 359))
                     await client.say(context.message.author.mention + " How many AU is planet " + str(
                         x) + " from the star? (1 AU = 1500mil km)")
-                    planet_distance_au_2 = await client.wait_for_message()
+                    planet_distance_au_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                     planet_distance_au = planet_distance_au_2.content
                     planet_distance_km = planet_distance_au * 1500000000
                     days_of_rotation = sqrt(int(planet_distance_au) ** 3 / int(star_mass))
@@ -1078,7 +1078,7 @@ class Universal:
         if time_passed == True:
             await client.say(
                 context.message.author.mention + " How many days have passed since you were last in this system? ")
-            days_2 = await client.wait_for_message()
+            days_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             days = days_2.content
             x = 0
             y = 0
@@ -1222,14 +1222,14 @@ class Universal:
 
         await client.say(
             context.message.author.mention + " Do you want to calculate a distance between two points? y/n  ")
-        distance_check_2 = await client.wait_for_message()
+        distance_check_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         distance_check = distance_check_2.content
 
         if distance_check.lower() == "y":
 
             await client.say(context.message.author.mention + " Do you want to input KM or AU? km/au")
             await asyncio.sleep(1)
-            au_check_2 = await client.wait_for_message()
+            au_check_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             au_check = au_check_2.content
 
             if au_check.lower() == "au":
@@ -1238,22 +1238,22 @@ class Universal:
 
             await client.say(context.message.author.mention + " First body - Distance from the sun: ")
             await asyncio.sleep(1)
-            distance_A_2 = await client.wait_for_message()
+            distance_A_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             distance_A = distance_A_2.content
 
             await client.say(context.message.author.mention + " First body - Relative angle: ")
             await asyncio.sleep(1)
-            sun_degrees_A_2 = await client.wait_for_message()
+            sun_degrees_A_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             sun_degrees_A = sun_degrees_A_2.content
 
             await client.say(context.message.author.mention + " Second body - Distance from the sun:  ")
             await asyncio.sleep(1)
-            distance_B_2 = await client.wait_for_message()
+            distance_B_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             distance_B = distance_B_2.content
 
             await client.say(context.message.author.mention + " Second body - Relative angle: ")
             await asyncio.sleep(1)
-            sun_degrees_B_2 = await client.wait_for_message()
+            sun_degrees_B_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             sun_degrees_B = sun_degrees_B_2.content
 
             if au_check == True:
@@ -1487,7 +1487,7 @@ class Universal:
                          "  Enter a distance (eg: 100km), or a UWP character "
                          "if approaching/departing a planetary jump point : ")
         await asyncio.sleep(1)
-        planet_2 = await client.wait_for_message()
+        planet_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         planet = planet_2.content
 
         planet_out = 0
@@ -1508,13 +1508,13 @@ class Universal:
                 await client.say(context.message.author.mention +
                                  "  **ERROR:** Please enter a valid UWP character or "
                                  "a distance with 'km' afterwards. Eg: 1000km ")
-                planet_2 = await client.wait_for_message()
+                planet_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                 planet = planet_2.content
 
         await client.say(context.message.author.mention +
                          "What's your ships speed rating? (G) ")
         await asyncio.sleep(0.5)
-        speed_2 = await client.wait_for_message()
+        speed_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         speed = speed_2.content
         await asyncio.sleep(1)
 
