@@ -12,7 +12,7 @@ import datetime
 import matplotlib.pyplot as plt
 from math import *
 
-BOT_PREFIX = ("?", "!")
+BOT_PREFIX = ("#")
 TOKEN = 'NTIxNjkyMTgwNzE3MjQwMzM0.DvEKQQ.Oc-wmzMhj4wHe6vb-F5r0AoPY6A'
 
 client = Bot(command_prefix=BOT_PREFIX)
