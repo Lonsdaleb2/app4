@@ -24,6 +24,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+    
 
 
 async def list_servers():
@@ -1008,6 +1009,334 @@ client.add_cog(MGT2e())
 class Universal:
     "Universal commands that don't rely on specific rules."
 
+    @client.command(name="system map",
+                description="Generates a map of a solar system",
+                brief="!map - create or call a map",
+                aliases=["map"],
+                pass_context=True)
+    async def system_map(context):
+        earth_orb_time = 365 # how many days it takes for a full orbit of the sun
+        print("Command fired")
+
+        planet_start = 0 # degrees
+
+        await client.say(context.message.author.mention + " Enter the system name/ID. Use underscores for spaces. ")
+        system_id_2 = await client.wait_for_message()
+        system_id = system_id_2.content
+        system_list = []
+        if system_id + ".p" not in str(glob.glob("*.p")): # this section checks and finds the persistent file.
+            print("File not found")
+            x = 1
+
+            await client.say(context.message.author.mention +" Solar system does not yet exist. How many planets are in this system?")
+            number_of_planets_2 = await client.wait_for_message()
+            number_of_planets = number_of_planets_2.content
+            await client.say(context.message.author.mention +" Do you want to - A: Enter the system data yourself? B: Use science to help generate it? A/B ")
+            check = await client.wait_for_message()
+            check = check.content
+            if check.lower() == "a":
+                while x <= int(number_of_planets):
+                    system_list.append(planet_start + random.randint(1, 359))
+                    await client.say(context.message.author.mention +" How many days does planet number "+str(x)+" take to orbit the sun?")
+                    days_of_rotation_2 = await client.wait_for_message()
+                    days_of_rotation = days_of_rotation_2.content
+                    system_list.append(days_of_rotation)
+                    await client.say(context.message.author.mention +" How far away is planet number "+str(x)+" from the sun? Use KM.")
+                    planet_distance_2 = await client.wait_for_message()
+                    planet_distance = planet_distance_2.content
+                    system_list.append(planet_distance)
+                    x += 1
+            elif check.lower() == "b":
+                await client.say(context.message.author.mention +" What is the relative mass of the system's star? (Sol = 1)")
+                star_mass_2 = await client.wait_for_message()
+                star_mass = star_mass_2.content
+                while x <= int(number_of_planets):
+                    system_list.append(planet_start + random.randint(1, 359))
+                    await client.say(context.message.author.mention +" How many AU is planet "+str(x)+" from the star? (1 AU = 1500mil km)")
+                    planet_distance_au_2 = await client.wait_for_message()
+                    planet_distance_au = planet_distance_au_2.content
+                    planet_distance_km = planet_distance_au*1500000000
+                    days_of_rotation = sqrt(int(planet_distance_au)**3/int(star_mass))
+                    days_of_rotation = days_of_rotation*365
+                    system_list.append(round(days_of_rotation, 2))
+                    system_list.append(planet_distance_km)
+                    x += 1
+            print("system created")
+            time_passed = False
+            pickle.dump(system_list, open(system_id + ".p", "wb")) # if it doesnt exist, creates a file and dumps data in.
+        else:
+            print("File found.")
+            time_passed = True
+
+        system_list = pickle.load(open(system_id + ".p", "rb")) # opens the persistent file to draw the data
+
+        system_planets = system_list[0::3]
+        system_orbit_time = system_list[1::3]
+        half_system_list = len(system_list)/3
+        if time_passed == True:
+            await client.say(context.message.author.mention +" How many days have passed since you were last in this system? ")
+            days_2 = await client.wait_for_message()
+            days = days_2.content
+            x = 0
+            y = 0
+            while x < half_system_list:
+
+                orbit_degrees = (360 / (int(system_orbit_time[x]))) * (int(days))
+                degrees_1 = system_planets[x] + orbit_degrees
+                if degrees_1 >= 360:
+                    degrees_1 = degrees_1 - 360  # when earth goes beyond 360 degrees, reset it to 0 for a new cycle.
+                system_planets[x] = degrees_1
+                system_list[y] = round(system_planets[x], 2)
+
+                y += 3
+                print(system_list)
+                x += 1
+        else:
+            days = 0
+
+        print(system_list)
+
+        a = 1
+        b = 0
+        while a <= len(system_list)/3:
+            print("Planet "+str(a)+" is "+str(system_list[b])+" degrees.")
+            b += 3
+            a += 1
+
+        line_points = []
+        a = 0
+        b = 0
+        c = 2
+        while a < len(system_list)/3:
+            body_degree = system_list[b] # degrees
+            if 0 < body_degree <= 90:
+                body_degree = body_degree
+                x = True
+                y = True
+            elif 90 < body_degree <= 180:
+                body_degree = 180 - body_degree
+                x = True
+                y = False
+            elif 180 < body_degree <= 270:
+                body_degree = 270 - body_degree
+                x = False
+                y = False
+            elif 270 < body_degree <= 360:
+                body_degree = 360 - body_degree
+                x = False
+                y = True
+
+            body_distance = system_list[c]/1500000000 # distance from sun in KM
+            body_radians = body_degree * (math.pi / 180)
+            x_coord = math.sin(body_radians)*body_distance
+            y_coord = math.cos(body_radians)*body_distance
+
+            if x == False:
+                x_coord = 0-x_coord
+            elif x == True:
+                x_coord = x_coord
+
+            if y == False:
+                y_coord = 0-y_coord
+            elif y == True:
+                y_coord = y_coord
+
+            line_points.append(x_coord)
+            line_points.append(y_coord)
+            a += 1
+            b += 3
+            c += 3
+
+        print(line_points)
+
+        sun = plt.Circle((0, 0), 0.2, color='y')
+
+        fig, ax = plt.subplots()
+        ax.set_aspect('equal')
+        ax = plt.gca()
+        ax.cla()
+
+        ax.set_xlim((-5, 5))
+        ax.set_ylim((-5, 5))
+
+        ax.add_artist(sun)
+        ax.text(-6.5, 5.5, r"System: "+system_id, fontsize=9, bbox = {'facecolor': 'white', 'edgecolor': 'black', 'pad': 5})
+
+        ax.text(5, 6, r"Orbit details:", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+
+        ax.text(-0.7, 5.5, r"0 degrees", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(-0.7, 5, r"(Coreward)", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+
+        ax.text(-0.8, -5.5, r"180 degrees", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(-0.75, -6, r"(Rimward)", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+
+        a = 0
+        b = 2
+        while a < len(system_list)/3:
+            distance_au = system_list[b]/1500000000
+            circle = plt.Circle((0, 0), distance_au, color='grey', fill=False)
+            ax.add_artist(circle)
+            a += 1
+            b += 3
+
+        z = 0
+        a = 0
+        b = 1
+        c = 0
+        d = 2
+        e = 0
+        f = 5.5
+        colour_list = ["black", "green", "red", "blue", "pink", "red", "blue", "black", "green"]
+        while z < len(line_points)/2:
+            xx = line_points[a]
+            yy = line_points[b]
+            distance_au = system_list[d] / 1500000000
+            angle = system_list[e]
+            circle = plt.Circle((xx, yy), 0.2, color=colour_list[c])
+            ax.add_artist(circle)
+            ax.text(3.5, f, r"Planet "+str(z+1)+": "+str(round(distance_au,1))+" AU @ "+str(angle)+" deg.", fontsize=8,
+                    bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+
+            a += 2
+            b += 2
+            c += 1
+            d += 3
+            e += 3
+            f -= 0.5
+            z += 1
+
+        channel = context.message.channel
+        fig.savefig(system_id + '_map.png')
+        file = system_id + '_map.png'
+        await client.send_file(channel, file, content="", filename=file)
+
+        await asyncio.sleep(1)
+
+        pickle.dump(system_list, open(system_id + ".p", "wb"))
+
+        await client.say(context.message.author.mention +" Do you want to calculate a distance between two points? y/n  ")
+        distance_check_2 = await client.wait_for_message()
+        distance_check = distance_check_2.content
+
+        if distance_check.lower() == "y":
+
+            await client.say(context.message.author.mention +" Do you want to input KM or AU? km/au")
+            await asyncio.sleep(1)
+            au_check_2 = await client.wait_for_message()
+            au_check = au_check_2.content
+
+            if au_check.lower() == "au":
+                au_check = True
+            await asyncio.sleep(1)
+
+            await client.say(context.message.author.mention +" First body - Distance from the sun: ")
+            await asyncio.sleep(1)
+            distance_A_2 = await client.wait_for_message()
+            distance_A = distance_A_2.content
+
+            await client.say(context.message.author.mention +" First body - Relative angle: ")
+            await asyncio.sleep(1)
+            sun_degrees_A_2 = await client.wait_for_message()
+            sun_degrees_A = sun_degrees_A_2.content
+
+            await client.say(context.message.author.mention +" Second body - Distance from the sun:  ")
+            await asyncio.sleep(1)
+            distance_B_2 = await client.wait_for_message()
+            distance_B = distance_B_2.content
+
+            await client.say(context.message.author.mention +" Second body - Relative angle: ")
+            await asyncio.sleep(1)
+            sun_degrees_B_2 = await client.wait_for_message()
+            sun_degrees_B = sun_degrees_B_2.content
+
+
+            if au_check == True:
+                distance_A = float(distance_A) * 1500000000
+                distance_B = float(distance_B) * 1500000000
+
+            sun_degrees_A = float(sun_degrees_A)
+            sun_degrees_B = float(sun_degrees_B)
+
+            sun_degrees_highest = max(sun_degrees_A, sun_degrees_B)
+            sun_degrees_lowest = min(sun_degrees_A, sun_degrees_B)
+
+
+
+            if sun_degrees_highest <= 180 and sun_degrees_lowest < 180: # both below 180
+                sun_degrees = sun_degrees_highest - sun_degrees_lowest
+                print("both below")
+            elif sun_degrees_highest >= 180 and sun_degrees_lowest <= 180: # one above, one below
+                sun_degrees = (360-sun_degrees_highest) + sun_degrees_lowest
+                print("one above one below")
+            elif sun_degrees_highest > 180 and sun_degrees_lowest >= 180: # both above 180
+                sun_degrees = (360-sun_degrees_lowest) - (360-sun_degrees_highest)
+                print("both above")
+
+            print("sun degrees")
+            print(sun_degrees)
+
+            sun_radians = sun_degrees*(math.pi/180)
+            print("sun radians")
+            print(sun_radians)
+
+            if distance_A > distance_B:
+                larger_distance = distance_A
+                smaller_distance = distance_B
+            else:
+                larger_distance = distance_B
+                smaller_distance = distance_A
+
+            if 0 < sun_degrees < 90:
+
+                z = (math.sin(sun_radians))*larger_distance
+                print(math.sin(sun_radians))
+                print("z: "+str(z))
+
+                y_a = math.pow(larger_distance, 2) - math.pow(z, 2)
+                y_a = math.sqrt(y_a)
+                print("y_a: "+str(y_a))
+
+                y_b = y_a - smaller_distance
+                print("y_b: "+str(y_b))
+
+                x_b = math.pow(y_b, 2) + math.pow(z, 2)
+                x_b = math.sqrt(x_b)
+                x_b = round(x_b, 3) # round to 3 digits after the decimal place
+
+                x_b_au = round((x_b / 1500000000), 3)
+                x_b = "{:,}".format(x_b)
+
+                await client.say(context.message.author.mention +
+                                 ": Distance between the two points = \n" + str(x_b) + " KM / " + str(x_b_au) + " AU.")
+
+            if 90 < sun_degrees <= 180:
+
+                new_radians = math.pi-sun_radians
+                print(new_radians)
+
+                z = (math.sin(new_radians))*larger_distance
+                print(math.sin(new_radians))
+                print("z: "+str(z))
+
+                y_a = math.pow(larger_distance, 2) - math.pow(z, 2)
+                y_a = math.sqrt(y_a)
+                print("y_a: "+str(y_a))
+
+                y_b = y_a + smaller_distance
+                print("y_b: "+str(y_b))
+
+                x_b = math.pow(y_b, 2) + math.pow(z, 2)
+                x_b = math.sqrt(x_b)
+                x_b = round(x_b, 3) # round to 3 digits after the decimal place
+
+                x_b_au = round((x_b / 1500000000),3)
+                x_b = "{:,}".format(x_b)
+
+                await client.say(context.message.author.mention +
+                                 ": Distance between the two points = \n"+str(x_b) + " KM / "+str(x_b_au)+" AU.")
+
+            
+    
     @commands.command(name="dice roller",
                     description="Rolls dice",
                     brief="!r XdY - rolls dice",
