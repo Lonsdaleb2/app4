@@ -1,4 +1,3 @@
-
 import asyncio
 import glob
 from discord.ext import commands
@@ -10,12 +9,15 @@ import random
 from trade_class import trade_goods
 import re
 import datetime
+import matplotlib.pyplot as plt
+from math import *
 
 BOT_PREFIX = ("?", "!")
 TOKEN = 'NTIxNjkyMTgwNzE3MjQwMzM0.DvEKQQ.Oc-wmzMhj4wHe6vb-F5r0AoPY6A'
 
 client = Bot(command_prefix=BOT_PREFIX)
 server_time_check = datetime.datetime.now()
+
 
 @client.event
 async def on_ready():
@@ -27,110 +29,109 @@ async def on_ready():
     global name_file
     name_file = (open('male_npcs.txt').readlines())
 
+
 async def list_servers():
     await client.wait_until_ready()
     while not client.is_closed:
-        print("------\nCurrent servers @ "+ server_time_check.strftime("%Y-%m-%d %H:%M:%S") +  " :")
+        print("------\nCurrent servers @ " + server_time_check.strftime("%Y-%m-%d %H:%M:%S") + " :")
         for server in client.servers:
             print("- " + server.name)
         await asyncio.sleep(3600)  # import asyncio required
 
 
-
 common_electronics = trade_goods("Common_Electronics", ["All"], "2d6*10", 20000, ["In", 2, "Ht", 3, "Ri", 1],
-                                     ["Na", 2, "Lt", 1, "Po", 1], "Simple electronics, basic computers.")
+                                 ["Na", 2, "Lt", 1, "Po", 1], "Simple electronics, basic computers.")
 common_industrial = trade_goods("Common_Industrial", ["All"], "2d6*10", 10000, ["Na", 2, "In", 5],
-                                    ["Ni", 3, "Ag", 2],
-                                    "Machine components and common spare parts.")
+                                ["Ni", 3, "Ag", 2],
+                                "Machine components and common spare parts.")
 common_manufactured = trade_goods("Common_Manufactured Goods", ["All"], "2d6*10", 20000, ["Na", 2, "In", 5],
-                                      ["Ni", 3, "Ag", 2], "Household appliances, clothing, etc.")
+                                  ["Ni", 3, "Ag", 2], "Household appliances, clothing, etc.")
 common_raw = trade_goods("Common_Raw_Materials", ["All"], "2d6*20", 5000, ["Na", 3, "Ga", 2], ["In", 2, "Po", 2],
-                             "Metals, chemicals, plastics, other basic materials.")
+                         "Metals, chemicals, plastics, other basic materials.")
 common_consumables = trade_goods("Common_Consumables", ["All"], "2d6*20", 500,
-                                     ["Ag", 3, "Wa", 2, "Ga", 1, "As", -4],
-                                     ["As", 1, "Fl", 1, "Ie", 1, "Hi", 1], "Food, drink and other agri products.")
+                                 ["Ag", 3, "Wa", 2, "Ga", 1, "As", -4],
+                                 ["As", 1, "Fl", 1, "Ie", 1, "Hi", 1], "Food, drink and other agri products.")
 common_ore = trade_goods("Common_Ore", ["All"], "2d6*20", 1000, ["As", 4], ["In", 3, "Ni", 1],
-                             "Ore bearing common metals.")
+                         "Ore bearing common metals.")
 
 advanced_electronics = trade_goods("Advanced_Electronics", ["In", "Ht"], "1d6*5", 100000,
-                                       ["In", 2, "Ht", 3, "Ri", 1],
-                                       ["Na", 2, "Lt", 1, "Po", 1], "Advanced sensors and computers up to TL15.")
+                                   ["In", 2, "Ht", 3, "Ri", 1],
+                                   ["Na", 2, "Lt", 1, "Po", 1], "Advanced sensors and computers up to TL15.")
 advanced_machine = trade_goods("Advanced_Machine_Parts", ["In", "Ht"], "1d6*5", 75000, ["In", 2, "Ht", 1],
-                                   ["As", 2, "Ni", 1], "Machine components, spare parts up to TL15.")
+                               ["As", 2, "Ni", 1], "Machine components, spare parts up to TL15.")
 advanced_manufactured = trade_goods("Advanced_Manufacturing_Goods", ["In", "Ht"], "1d6*5", 100000, ["In", 1],
-                                        ["Hi", 1, "Ri", 2], "Devices and clothing incorporating advanced tech.")
+                                    ["Hi", 1, "Ri", 2], "Devices and clothing incorporating advanced tech.")
 advanced_weapons = trade_goods("Advanced_Weapons", ["In", "Ht"], "1d6*5", 150000, ["Ht", 2],
-                                   ["Po", 1, "Amber", 2, "Red", 4],
-                                   "Firearms, explosives, ammo, artillery. Military grade.")
+                               ["Po", 1, "Amber", 2, "Red", 4],
+                               "Firearms, explosives, ammo, artillery. Military grade.")
 advanced_vehicles = trade_goods("Advanced_Vehicles", ["In", "Ht"], "1d6*5", 180000, ["Ht", 2],
-                                    ["As", 2, "Ri", 2], "Air/rafts, spacecraft, grav tanks, vehicles up to TL15.")
+                                ["As", 2, "Ri", 2], "Air/rafts, spacecraft, grav tanks, vehicles up to TL15.")
 biochemicals = trade_goods("Biochemicals", ["Ag", "Wa"], "1d6*5", 50000, ["Ag", 1, "Wa", 2],
-                               ["In", 2], "Biofuels, organic chemicals, extracts.")
+                           ["In", 2], "Biofuels, organic chemicals, extracts.")
 crystals_gems = trade_goods("Crystals_&_Gems", ["As", "De", "Ie"], "1d6*5", 20000, ["As", 2, "De", 1, "Ie", 1],
-                                ["In", 3, "Ri", 2], "Diamonds, synthetics or natural gemstones.")
+                            ["In", 3, "Ri", 2], "Diamonds, synthetics or natural gemstones.")
 cybernetics = trade_goods("Cybernetics", ["Ht"], "1d6", 250000, ["Ht", 1], ["As", 1, "Ie", 1, "Ri", 2],
-                              "Cybernetic components, replacement limbs.")
+                          "Cybernetic components, replacement limbs.")
 animals = trade_goods("Animals", ["Ag", "Ga"], "1d6*10", 10000, ["Ag", 2], ["Lo", 3],
-                          "Riding animals, beasts of burden, exotic pets.")
+                      "Riding animals, beasts of burden, exotic pets.")
 luxury_consumables = trade_goods("Luxury_Consumables", ["Ag", "Ga", "Wa"], "1d6*10", 20000,
-                                     ["Ag", 2, "Wa", 1], ["Ri", 2, "Hi", 2], "Rare foods, fine liquors.")
+                                 ["Ag", 2, "Wa", 1], ["Ri", 2, "Hi", 2], "Rare foods, fine liquors.")
 luxury_goods = trade_goods("Luxury_Goods", ["Hi"], "1d6", 200000, ["Hi", 1], ["Ri", 4],
-                               "Rare or extremely high-quality manufactured goods.")
+                           "Rare or extremely high-quality manufactured goods.")
 medical_supplies = trade_goods("Medical_Supplies", ["Hi", "Ht"], "1d6*5", 50000, ["Ht", 2],
-                                   ["In", 2, "Ri", 1, "Po", 1],
-                                   "Diagnostic equipment, basic drugs, cloning tech.")
+                               ["In", 2, "Ri", 1, "Po", 1],
+                               "Diagnostic equipment, basic drugs, cloning tech.")
 petrochemicals = trade_goods("Petrochemicals", ["De", "Fl", "Ie", "Wa"], "1d6*10", 10000, ["De", 2],
-                                 ["In", 2, "Ag", 1, "Lt", 2], "Oil, liquid fuels.")
+                             ["In", 2, "Ag", 1, "Lt", 2], "Oil, liquid fuels.")
 pharma = trade_goods("Pharmaceuticals", ["As", "De", "Hi", "Wa"], "1d6", 100000, ["As", 2, "Hi", 1],
-                         ["Ri", 2, "Lt", 1], "Drugs, medical supplies, fast/slow drugs, anagathatics.")
+                     ["Ri", 2, "Lt", 1], "Drugs, medical supplies, fast/slow drugs, anagathatics.")
 polymers = trade_goods("Polymers", ["In"], "1d6*10", 7000, ["In", 1], ["Ri", 2, "Ni", 1],
-                           "Plastics and other synthetics.")
+                       "Plastics and other synthetics.")
 precious_metals = trade_goods("Precious_Metals", ["As", "De", "Ie", "Fl"], "1d6", 50000,
-                                  ["As", 3, "De", 1, "Ie", 2], ["Ri", 3, "In", 2, "Ht", 1],
-                                  "Gold, silver, platinum, rare elements.")
+                              ["As", 3, "De", 1, "Ie", 2], ["Ri", 3, "In", 2, "Ht", 1],
+                              "Gold, silver, platinum, rare elements.")
 radioactives = trade_goods("Radioactives", ["As", "De", "Lo"], "1d6", 1000000, ["As", 2, "Lo", 2],
-                               ["In", 3, "Ht", 1, "Ni", -2, "Ag", -3], "Uranium, plutonium, unobtanium, rare elements.")
+                           ["In", 3, "Ht", 1, "Ni", -2, "Ag", -3], "Uranium, plutonium, unobtanium, rare elements.")
 robots = trade_goods("Robots", ["All"], "1d6*5", 400000, ["In", 1], ["Ag", 2, "Ht", 1],
-                         "Industrial and personal robots and drones.")
+                     "Industrial and personal robots and drones.")
 spices = trade_goods("Spices", ["Ga", "De", "Wa"], "1d6*10", 6000, ["De", 2], ["Hi", 2, "Ri", 3, "Po", 3],
-                         "Preservatives, luxury food additives, natural drugs.")
+                     "Preservatives, luxury food additives, natural drugs.")
 textiles = trade_goods("Textiles", ["Ag", "Ni"], "1d6*20", 3000, ["Ag", 7], ["Hi", 3, "Na", 2],
-                           "Clothing and fabrics.")
+                       "Clothing and fabrics.")
 uncommon_ore = trade_goods("Uncommon_Ore", ["As", "Ie"], "1d6*10", 5000, ["As", 4], ["In", 3, "Ni", 1],
-                               "Ore containing precious or valuable metals.")
+                           "Ore containing precious or valuable metals.")
 uncommon_raw = trade_goods("Uncommon_Raw_Materials", ["Ag", "De", "Wa"], "1d6*10", 20000, ["Ag", 2, "Wa", 1], [
-        "In", 2, "Ht", 1], "Valuable metals, rare elements.")
+    "In", 2, "Ht", 1], "Valuable metals, rare elements.")
 wood = trade_goods("Wood", ["Ag", "Ga"], "1d6*20", 1000, ["Ag", 6], ["Ri", 2, "In", 1],
-                       "Hard or beautiful woods and plant extracts.")
+                   "Hard or beautiful woods and plant extracts.")
 vehicles = trade_goods("Vehicles", ["In", "Ht"], "1d6*10", 15000, ["In", 2, "Ht", 1], ["Ni", 2, "Hi", 1],
-                           "Wheeled, tracked and other vehicles from TL10 or lower.")
+                       "Wheeled, tracked and other vehicles from TL10 or lower.")
 illegal_bio = trade_goods("Illegal_Biochemicals", ["Ag", "Wa"], "1d6*5", 50000, ["Wa", 2], ["In", 6],
-                              "Dangerous chemicals, extracts from endangered species.")
+                          "Dangerous chemicals, extracts from endangered species.")
 illegal_cyber = trade_goods("Illegal_Cybernetics", ["Ht"], "1d6", 250000, ["Ht", 1],
-                                ["As", 4, "Ie", 4, "Ri", 8, "Amber", 6, "Red", 6],
-                                "Combat cybernetics, illegal enhancements.")
+                            ["As", 4, "Ie", 4, "Ri", 8, "Amber", 6, "Red", 6],
+                            "Combat cybernetics, illegal enhancements.")
 illegal_drugs = trade_goods("Illegal_Drugs", ["As", "Hi", "De", "Wa"], "1d6", 100000,
-                                ["As", 1, "De", 1, "Ga", 1, "Wa", 1], ["Ri", 6, "Hi", 6],
-                                "Addictive drugs, combat drugs.")
+                            ["As", 1, "De", 1, "Ga", 1, "Wa", 1], ["Ri", 6, "Hi", 6],
+                            "Addictive drugs, combat drugs.")
 illegal_luxuries = trade_goods("Illegal_Luxuries", ["Ag", "Ga", "Wa"], "1d6", 50000,
-                                   ["Ag", 2, "Wa", 1], ["Ri", 6, "Hi", 4], "Debauched or addictive luxuries.")
+                               ["Ag", 2, "Wa", 1], ["Ri", 6, "Hi", 4], "Debauched or addictive luxuries.")
 illegal_weapons = trade_goods("Illegal_Weapons", ["In", "Ht"], "1d6*5", 150000, ["Ht", 2],
-                                  ["Po", 6, "Amber", 8, "Red", 10], "Weapons of mass destruction, naval weapons.")
+                              ["Po", 6, "Amber", 8, "Red", 10], "Weapons of mass destruction, naval weapons.")
 exotics = trade_goods("Exotics", ["Special", 1], "1d6", 10, ["Special", 1], ["Special", 1], "Special.")
 
+
 # 35 entries
-
-
 
 
 class MGT2e:
     "Commands created with the MGT2e ruleset."
 
     @commands.command(name="Buying goods",
-                    description="Automates buying of Traveller trade goods.",
-                    brief="!buy - What trade goods are available",
-                    aliases=["buying", "buy"],
-                    pass_context=True)  # context will mention the original messenger.
+                      description="Automates buying of Traveller trade goods.",
+                      brief="!buy - What trade goods are available",
+                      aliases=["buying", "buy"],
+                      pass_context=True)  # context will mention the original messenger.
     async def buying(self, context):
 
         purchase_list_buying = {
@@ -589,13 +590,11 @@ class MGT2e:
                          + trade_list_string)
         print(trade_list_string)
 
-
-
     @commands.command(name="Selling goods",
-                    description="Automates selling of Traveller trade goods.",
-                    brief="!sell - Selling price of goods",
-                    aliases=["selling", "sell"],
-                    pass_context=True)  # context will mention the original messenger.
+                      description="Automates selling of Traveller trade goods.",
+                      brief="!sell - Selling price of goods",
+                      aliases=["selling", "sell"],
+                      pass_context=True)  # context will mention the original messenger.
     async def selling(self, context):
 
         master_trade_goods_list = []
@@ -843,14 +842,12 @@ class MGT2e:
             context.message.author.mention + " the local trader you have found will buy your goods for the following prices:\n"
             + selling_list_string)
 
-
-
     @commands.command(name="UWP Translator",
-                    description="Converts UWP numbers using the following format:\n "
-                                "Starport Planet-Size Atmosphere Hydroponics Population Government Law-Level Tech-Level",
-                    brief="!uwp - Translates UWP",
-                    aliases=["UWP", "uwp"],
-                    pass_context=True)
+                      description="Converts UWP numbers using the following format:\n "
+                                  "Starport Planet-Size Atmosphere Hydroponics Population Government Law-Level Tech-Level",
+                      brief="!uwp - Translates UWP",
+                      aliases=["UWP", "uwp"],
+                      pass_context=True)
     async def uwp(self, context, starqual, plansize, atmostype, hydro, pop, gov, law, tech):  # input variable
 
         starport_quality = {
@@ -998,83 +995,89 @@ class MGT2e:
         if isinstance(error, commands.MissingRequiredArgument):
             await client.say(context.message.author.mention + ", your UWP code is incorrect. "
                                                               "```Please use the format: !uwp X X X X X X X X \n"
-                                                                "\tEg. !uwp A 1 2 3 4 5 6 7```")
-
+                                                              "\tEg. !uwp A 1 2 3 4 5 6 7```")
 
 
 client.add_cog(MGT2e())
-
 
 
 class Universal:
     "Universal commands that don't rely on specific rules."
 
     @client.command(name="system map",
-                description="Generates a map of a solar system",
-                brief="!map - create or call a map",
-                aliases=["map"],
-                pass_context=True)
+                    description="Generates a map of a solar system",
+                    brief="!map - create or call a map",
+                    aliases=["map"],
+                    pass_context=True)
     async def system_map(context):
-        earth_orb_time = 365 # how many days it takes for a full orbit of the sun
+        earth_orb_time = 365  # how many days it takes for a full orbit of the sun
         print("Command fired")
 
-        planet_start = 0 # degrees
+        planet_start = 0  # degrees
 
         await client.say(context.message.author.mention + " Enter the system name/ID. Use underscores for spaces. ")
         system_id_2 = await client.wait_for_message()
         system_id = system_id_2.content
         system_list = []
-        if system_id + ".p" not in str(glob.glob("*.p")): # this section checks and finds the persistent file.
+        if system_id + ".p" not in str(glob.glob("*.p")):  # this section checks and finds the persistent file.
             print("File not found")
             x = 1
 
-            await client.say(context.message.author.mention +" Solar system does not yet exist. How many planets are in this system?")
+            await client.say(
+                context.message.author.mention + " Solar system does not yet exist. How many planets are in this system?")
             number_of_planets_2 = await client.wait_for_message()
             number_of_planets = number_of_planets_2.content
-            await client.say(context.message.author.mention +" Do you want to - A: Enter the system data yourself? B: Use science to help generate it? A/B ")
+            await client.say(
+                context.message.author.mention + " Do you want to - A: Enter the system data yourself? B: Use science to help generate it? A/B ")
             check = await client.wait_for_message()
             check = check.content
             if check.lower() == "a":
                 while x <= int(number_of_planets):
                     system_list.append(planet_start + random.randint(1, 359))
-                    await client.say(context.message.author.mention +" How many days does planet number "+str(x)+" take to orbit the sun?")
+                    await client.say(context.message.author.mention + " How many days does planet number " + str(
+                        x) + " take to orbit the sun?")
                     days_of_rotation_2 = await client.wait_for_message()
                     days_of_rotation = days_of_rotation_2.content
                     system_list.append(days_of_rotation)
-                    await client.say(context.message.author.mention +" How far away is planet number "+str(x)+" from the sun? Use KM.")
+                    await client.say(context.message.author.mention + " How far away is planet number " + str(
+                        x) + " from the sun? Use KM.")
                     planet_distance_2 = await client.wait_for_message()
                     planet_distance = planet_distance_2.content
                     system_list.append(planet_distance)
                     x += 1
             elif check.lower() == "b":
-                await client.say(context.message.author.mention +" What is the relative mass of the system's star? (Sol = 1)")
+                await client.say(
+                    context.message.author.mention + " What is the relative mass of the system's star? (Sol = 1)")
                 star_mass_2 = await client.wait_for_message()
                 star_mass = star_mass_2.content
                 while x <= int(number_of_planets):
                     system_list.append(planet_start + random.randint(1, 359))
-                    await client.say(context.message.author.mention +" How many AU is planet "+str(x)+" from the star? (1 AU = 1500mil km)")
+                    await client.say(context.message.author.mention + " How many AU is planet " + str(
+                        x) + " from the star? (1 AU = 1500mil km)")
                     planet_distance_au_2 = await client.wait_for_message()
                     planet_distance_au = planet_distance_au_2.content
-                    planet_distance_km = planet_distance_au*1500000000
-                    days_of_rotation = sqrt(int(planet_distance_au)**3/int(star_mass))
-                    days_of_rotation = days_of_rotation*365
+                    planet_distance_km = planet_distance_au * 1500000000
+                    days_of_rotation = sqrt(int(planet_distance_au) ** 3 / int(star_mass))
+                    days_of_rotation = days_of_rotation * 365
                     system_list.append(round(days_of_rotation, 2))
                     system_list.append(planet_distance_km)
                     x += 1
             print("system created")
             time_passed = False
-            pickle.dump(system_list, open(system_id + ".p", "wb")) # if it doesnt exist, creates a file and dumps data in.
+            pickle.dump(system_list,
+                        open(system_id + ".p", "wb"))  # if it doesnt exist, creates a file and dumps data in.
         else:
             print("File found.")
             time_passed = True
 
-        system_list = pickle.load(open(system_id + ".p", "rb")) # opens the persistent file to draw the data
+        system_list = pickle.load(open(system_id + ".p", "rb"))  # opens the persistent file to draw the data
 
         system_planets = system_list[0::3]
         system_orbit_time = system_list[1::3]
-        half_system_list = len(system_list)/3
+        half_system_list = len(system_list) / 3
         if time_passed == True:
-            await client.say(context.message.author.mention +" How many days have passed since you were last in this system? ")
+            await client.say(
+                context.message.author.mention + " How many days have passed since you were last in this system? ")
             days_2 = await client.wait_for_message()
             days = days_2.content
             x = 0
@@ -1098,8 +1101,8 @@ class Universal:
 
         a = 1
         b = 0
-        while a <= len(system_list)/3:
-            print("Planet "+str(a)+" is "+str(system_list[b])+" degrees.")
+        while a <= len(system_list) / 3:
+            print("Planet " + str(a) + " is " + str(system_list[b]) + " degrees.")
             b += 3
             a += 1
 
@@ -1107,8 +1110,8 @@ class Universal:
         a = 0
         b = 0
         c = 2
-        while a < len(system_list)/3:
-            body_degree = system_list[b] # degrees
+        while a < len(system_list) / 3:
+            body_degree = system_list[b]  # degrees
             if 0 < body_degree <= 90:
                 body_degree = body_degree
                 x = True
@@ -1126,18 +1129,18 @@ class Universal:
                 x = False
                 y = True
 
-            body_distance = system_list[c]/1500000000 # distance from sun in KM
+            body_distance = system_list[c] / 1500000000  # distance from sun in KM
             body_radians = body_degree * (math.pi / 180)
-            x_coord = math.sin(body_radians)*body_distance
-            y_coord = math.cos(body_radians)*body_distance
+            x_coord = math.sin(body_radians) * body_distance
+            y_coord = math.cos(body_radians) * body_distance
 
             if x == False:
-                x_coord = 0-x_coord
+                x_coord = 0 - x_coord
             elif x == True:
                 x_coord = x_coord
 
             if y == False:
-                y_coord = 0-y_coord
+                y_coord = 0 - y_coord
             elif y == True:
                 y_coord = y_coord
 
@@ -1160,20 +1163,21 @@ class Universal:
         ax.set_ylim((-5, 5))
 
         ax.add_artist(sun)
-        ax.text(-6.5, 5.5, r"System: "+system_id, fontsize=9, bbox = {'facecolor': 'white', 'edgecolor': 'black', 'pad': 5})
+        ax.text(-6.5, 5.5, r"System: " + system_id, fontsize=9,
+                bbox={'facecolor': 'white', 'edgecolor': 'black', 'pad': 5})
 
-        ax.text(5, 6, r"Orbit details:", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(5, 6, r"Orbit details:", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
 
-        ax.text(-0.7, 5.5, r"0 degrees", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
-        ax.text(-0.7, 5, r"(Coreward)", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(-0.7, 5.5, r"0 degrees", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(-0.7, 5, r"(Coreward)", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
 
-        ax.text(-0.8, -5.5, r"180 degrees", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
-        ax.text(-0.75, -6, r"(Rimward)", fontsize=8, bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(-0.8, -5.5, r"180 degrees", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(-0.75, -6, r"(Rimward)", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
 
         a = 0
         b = 2
-        while a < len(system_list)/3:
-            distance_au = system_list[b]/1500000000
+        while a < len(system_list) / 3:
+            distance_au = system_list[b] / 1500000000
             circle = plt.Circle((0, 0), distance_au, color='grey', fill=False)
             ax.add_artist(circle)
             a += 1
@@ -1187,15 +1191,17 @@ class Universal:
         e = 0
         f = 5.5
         colour_list = ["black", "green", "red", "blue", "pink", "red", "blue", "black", "green"]
-        while z < len(line_points)/2:
+        while z < len(line_points) / 2:
             xx = line_points[a]
             yy = line_points[b]
             distance_au = system_list[d] / 1500000000
             angle = system_list[e]
             circle = plt.Circle((xx, yy), 0.2, color=colour_list[c])
             ax.add_artist(circle)
-            ax.text(3.5, f, r"Planet "+str(z+1)+": "+str(round(distance_au,1))+" AU @ "+str(angle)+" deg.", fontsize=8,
-                    bbox = {'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+            ax.text(3.5, f,
+                    r"Planet " + str(z + 1) + ": " + str(round(distance_au, 1)) + " AU @ " + str(angle) + " deg.",
+                    fontsize=8,
+                    bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
 
             a += 2
             b += 2
@@ -1214,13 +1220,14 @@ class Universal:
 
         pickle.dump(system_list, open(system_id + ".p", "wb"))
 
-        await client.say(context.message.author.mention +" Do you want to calculate a distance between two points? y/n  ")
+        await client.say(
+            context.message.author.mention + " Do you want to calculate a distance between two points? y/n  ")
         distance_check_2 = await client.wait_for_message()
         distance_check = distance_check_2.content
 
         if distance_check.lower() == "y":
 
-            await client.say(context.message.author.mention +" Do you want to input KM or AU? km/au")
+            await client.say(context.message.author.mention + " Do you want to input KM or AU? km/au")
             await asyncio.sleep(1)
             au_check_2 = await client.wait_for_message()
             au_check = au_check_2.content
@@ -1229,26 +1236,25 @@ class Universal:
                 au_check = True
             await asyncio.sleep(1)
 
-            await client.say(context.message.author.mention +" First body - Distance from the sun: ")
+            await client.say(context.message.author.mention + " First body - Distance from the sun: ")
             await asyncio.sleep(1)
             distance_A_2 = await client.wait_for_message()
             distance_A = distance_A_2.content
 
-            await client.say(context.message.author.mention +" First body - Relative angle: ")
+            await client.say(context.message.author.mention + " First body - Relative angle: ")
             await asyncio.sleep(1)
             sun_degrees_A_2 = await client.wait_for_message()
             sun_degrees_A = sun_degrees_A_2.content
 
-            await client.say(context.message.author.mention +" Second body - Distance from the sun:  ")
+            await client.say(context.message.author.mention + " Second body - Distance from the sun:  ")
             await asyncio.sleep(1)
             distance_B_2 = await client.wait_for_message()
             distance_B = distance_B_2.content
 
-            await client.say(context.message.author.mention +" Second body - Relative angle: ")
+            await client.say(context.message.author.mention + " Second body - Relative angle: ")
             await asyncio.sleep(1)
             sun_degrees_B_2 = await client.wait_for_message()
             sun_degrees_B = sun_degrees_B_2.content
-
 
             if au_check == True:
                 distance_A = float(distance_A) * 1500000000
@@ -1260,22 +1266,20 @@ class Universal:
             sun_degrees_highest = max(sun_degrees_A, sun_degrees_B)
             sun_degrees_lowest = min(sun_degrees_A, sun_degrees_B)
 
-
-
-            if sun_degrees_highest <= 180 and sun_degrees_lowest < 180: # both below 180
+            if sun_degrees_highest <= 180 and sun_degrees_lowest < 180:  # both below 180
                 sun_degrees = sun_degrees_highest - sun_degrees_lowest
                 print("both below")
-            elif sun_degrees_highest >= 180 and sun_degrees_lowest <= 180: # one above, one below
-                sun_degrees = (360-sun_degrees_highest) + sun_degrees_lowest
+            elif sun_degrees_highest >= 180 and sun_degrees_lowest <= 180:  # one above, one below
+                sun_degrees = (360 - sun_degrees_highest) + sun_degrees_lowest
                 print("one above one below")
-            elif sun_degrees_highest > 180 and sun_degrees_lowest >= 180: # both above 180
-                sun_degrees = (360-sun_degrees_lowest) - (360-sun_degrees_highest)
+            elif sun_degrees_highest > 180 and sun_degrees_lowest >= 180:  # both above 180
+                sun_degrees = (360 - sun_degrees_lowest) - (360 - sun_degrees_highest)
                 print("both above")
 
             print("sun degrees")
             print(sun_degrees)
 
-            sun_radians = sun_degrees*(math.pi/180)
+            sun_radians = sun_degrees * (math.pi / 180)
             print("sun radians")
             print(sun_radians)
 
@@ -1287,21 +1291,20 @@ class Universal:
                 smaller_distance = distance_A
 
             if 0 < sun_degrees < 90:
-
-                z = (math.sin(sun_radians))*larger_distance
+                z = (math.sin(sun_radians)) * larger_distance
                 print(math.sin(sun_radians))
-                print("z: "+str(z))
+                print("z: " + str(z))
 
                 y_a = math.pow(larger_distance, 2) - math.pow(z, 2)
                 y_a = math.sqrt(y_a)
-                print("y_a: "+str(y_a))
+                print("y_a: " + str(y_a))
 
                 y_b = y_a - smaller_distance
-                print("y_b: "+str(y_b))
+                print("y_b: " + str(y_b))
 
                 x_b = math.pow(y_b, 2) + math.pow(z, 2)
                 x_b = math.sqrt(x_b)
-                x_b = round(x_b, 3) # round to 3 digits after the decimal place
+                x_b = round(x_b, 3)  # round to 3 digits after the decimal place
 
                 x_b_au = round((x_b / 1500000000), 3)
                 x_b = "{:,}".format(x_b)
@@ -1310,38 +1313,35 @@ class Universal:
                                  ": Distance between the two points = \n" + str(x_b) + " KM / " + str(x_b_au) + " AU.")
 
             if 90 < sun_degrees <= 180:
-
-                new_radians = math.pi-sun_radians
+                new_radians = math.pi - sun_radians
                 print(new_radians)
 
-                z = (math.sin(new_radians))*larger_distance
+                z = (math.sin(new_radians)) * larger_distance
                 print(math.sin(new_radians))
-                print("z: "+str(z))
+                print("z: " + str(z))
 
                 y_a = math.pow(larger_distance, 2) - math.pow(z, 2)
                 y_a = math.sqrt(y_a)
-                print("y_a: "+str(y_a))
+                print("y_a: " + str(y_a))
 
                 y_b = y_a + smaller_distance
-                print("y_b: "+str(y_b))
+                print("y_b: " + str(y_b))
 
                 x_b = math.pow(y_b, 2) + math.pow(z, 2)
                 x_b = math.sqrt(x_b)
-                x_b = round(x_b, 3) # round to 3 digits after the decimal place
+                x_b = round(x_b, 3)  # round to 3 digits after the decimal place
 
-                x_b_au = round((x_b / 1500000000),3)
+                x_b_au = round((x_b / 1500000000), 3)
                 x_b = "{:,}".format(x_b)
 
                 await client.say(context.message.author.mention +
-                                 ": Distance between the two points = \n"+str(x_b) + " KM / "+str(x_b_au)+" AU.")
+                                 ": Distance between the two points = \n" + str(x_b) + " KM / " + str(x_b_au) + " AU.")
 
-            
-    
     @commands.command(name="dice roller",
-                    description="Rolls dice",
-                    brief="!r XdY - rolls dice",
-                    aliases=["r", "roll", "dice"],
-                    pass_context=True)  # context will mention the original messenger.
+                      description="Rolls dice",
+                      brief="!r XdY - rolls dice",
+                      aliases=["r", "roll", "dice"],
+                      pass_context=True)  # context will mention the original messenger.
     async def dice_roll(self, context, entry):
         dice = entry
         dice = dice.replace("+", " plus ")
@@ -1462,13 +1462,11 @@ class Universal:
                          + " = "
                          + str(dicelist))
 
-
-
     @commands.command(name="Travel time",
-                    description="How long is the journey?",
-                    brief="!t - Journey time in space",
-                    aliases=["travel", "t", "trav"],
-                    pass_context=True)
+                      description="How long is the journey?",
+                      brief="!t - Journey time in space",
+                      aliases=["travel", "t", "trav"],
+                      pass_context=True)
     async def travel_time(self, context):
 
         planet_size = {
@@ -1540,16 +1538,16 @@ class Universal:
                              + "(Travelling " + str(planet_out) + "km @ " + str(speed) + "G)")
         if jump == True:
             await client.say(context.message.author.mention +
-                             "   Distance to/from 100D jump point of category-" +str(planet)+ " planet: (d/h/m/s): \n" + "%d:%d:%02d:%02d" % (
-                             d, h, m, s) + "\n"
+                             "   Distance to/from 100D jump point of category-" + str(
+                planet) + " planet: (d/h/m/s): \n" + "%d:%d:%02d:%02d" % (
+                                 d, h, m, s) + "\n"
                              + "(Travelling " + str(planet_out) + "km @ " + str(speed) + "G)")
 
-
     @commands.command(name="Random NPC",
-                    description="Random npc",
-                    brief="!npc - generate a random NPC for inspiration",
-                    aliases=["npc"],
-                    pass_context=True)
+                      description="Random npc",
+                      brief="!npc - generate a random NPC for inspiration",
+                      aliases=["npc"],
+                      pass_context=True)
     async def random_npc(self, context):
 
         line = random.choice(name_file)
@@ -1648,10 +1646,10 @@ class Universal:
                          )
 
     @commands.command(name="wallet",
-                    description="manages your funds",
-                    brief="!wallet - keep track of your finances",
-                    aliases=["wal", "w"],
-                    pass_context=True)
+                      description="manages your funds",
+                      brief="!wallet - keep track of your finances",
+                      aliases=["wal", "w"],
+                      pass_context=True)
     async def wallet(self, context, command, number, *args):
 
         user_id = context.message.author.id
@@ -1757,14 +1755,15 @@ class Universal:
 
 client.add_cog(Universal())
 
+
 class Homebrew:
     "Homebrew rules created from multiple editions. Use with care."
 
     @commands.command(name="re-entry/orbit",
-                    description="time between surface / orbit",
-                    brief="!entry / !orbit A B C D :: inspired by T5",
-                    aliases=["entry", "orbit"],
-                    pass_context=True)
+                      description="time between surface / orbit",
+                      brief="!entry / !orbit A B C D :: inspired by T5",
+                      aliases=["entry", "orbit"],
+                      pass_context=True)
     async def entry_orbit(self, context, speed, planet, atmos, armour):
 
         speed = int(speed)
@@ -1823,32 +1822,34 @@ class Homebrew:
         atmos_2 = atmos_type.get(atmos)
         print(atmos_2)
 
-        safe = (planet + atmos_2)*(planet+2)
-        slow = (planet + atmos_2)*((planet/2)+1)
+        safe = (planet + atmos_2) * (planet + 2)
+        slow = (planet + atmos_2) * ((planet / 2) + 1)
         fast = planet + atmos_2
 
-        safe_2 = round(safe*speed_percentage.get(speed))
-        slow_2 = round(slow*speed_percentage.get(speed))
-        fast_2 = round(fast*speed_percentage.get(speed))
+        safe_2 = round(safe * speed_percentage.get(speed))
+        slow_2 = round(slow * speed_percentage.get(speed))
+        fast_2 = round(fast * speed_percentage.get(speed))
 
         ship_armour = armour
         fast_damage = atmos_2 - ship_armour
         if fast_damage <= 0:
             fast_damage = 0
-        fast_total = round(fast_damage*(fast_2/2))
-        slow_damage = round((atmos_2/2) - ship_armour)
+        fast_total = round(fast_damage * (fast_2 / 2))
+        slow_damage = round((atmos_2 / 2) - ship_armour)
         if slow_damage <= 0:
             slow_damage = 0
-        slow_total = round(slow_damage*(slow_2/4))
+        slow_total = round(slow_damage * (slow_2 / 4))
         await client.say(context.message.author.mention
                          + " ``speed: " + str(speed)
                          + "G. Planet size: " + str(planet) + " / " + str(planet_size.get(planet)) + "km"
                          + ". Atmosphere: " + str(atmos_2) + "``\n"
                          + "*Travelling between orbit and surface on this planet will take:*\n"
-                         + "\tFAST: " + str(fast_2) + " minutes - (" + str(fast_damage) + ") damage every 2 minutes = " + str(fast_total) + " damage.\n"
-                         + "\tSLOW: " + str(slow_2) + " minutes - (" + str(slow_damage) + ") damage every 4 minutes = " + str(slow_total) + " damage. \n"
+                         + "\tFAST: " + str(fast_2) + " minutes - (" + str(
+            fast_damage) + ") damage every 2 minutes = " + str(fast_total) + " damage.\n"
+                         + "\tSLOW: " + str(slow_2) + " minutes - (" + str(
+            slow_damage) + ") damage every 4 minutes = " + str(slow_total) + " damage. \n"
                          + "\tSAFE: " + str(safe_2) + " minutes - no damage\n"
-                         + "*damage = atmos number - armour("+str(ship_armour)+")*")
+                         + "*damage = atmos number - armour(" + str(ship_armour) + ")*")
 
     @entry_orbit.error
     async def entry_orbit_handler(self, error, context):
@@ -1857,10 +1858,8 @@ class Homebrew:
                              + "```speed rating, UWP planet character, UWP atmosphere character, ship armour. "
                                "\n\teg. !entry 4 3 2 1```")
 
+
 client.add_cog(Homebrew())
-
-
-
 
 client.loop.create_task(list_servers())
 
