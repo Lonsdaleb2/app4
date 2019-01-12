@@ -1004,7 +1004,7 @@ client.add_cog(MGT2e())
 class Universal:
     "Universal commands that don't rely on specific rules."
 
-    @client.command(name="system map",
+    @commands.command(name="system map",
                     description="Generates a map of a solar system",
                     brief="!map - create or call a map",
                     aliases=["map"],
