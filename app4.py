@@ -1060,7 +1060,7 @@ class Universal:
                     days_of_rotation = sqrt(int(planet_distance_au) ** 3 / int(star_mass))
                     days_of_rotation = days_of_rotation * 365
                     system_list.append(round(days_of_rotation, 2))
-                    system_list.append(planet_distance_km)
+                    system_list.append(planet_distance_au)
                     x += 1
             print("system created")
             time_passed = False
