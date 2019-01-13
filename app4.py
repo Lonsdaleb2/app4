@@ -1056,7 +1056,7 @@ class Universal:
                         x) + " from the star? (1 AU = 1500mil km)")
                     planet_distance_au_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                     planet_distance_au = planet_distance_au_2.content
-                    planet_distance_km = planet_distance_au * 1500000000
+                    planet_distance_au = planet_distance_au * 1500000000
                     days_of_rotation = sqrt(int(planet_distance_au) ** 3 / int(star_mass))
                     days_of_rotation = days_of_rotation * 365
                     system_list.append(round(days_of_rotation, 2))
