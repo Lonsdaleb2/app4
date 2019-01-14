@@ -1056,16 +1056,15 @@ class Universal:
                         x) + " from the star? (1 AU = 1500mil km)")
                     planet_distance_au_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                     planet_distance_au = planet_distance_au_2.content
-                    planet_distance_au = planet_distance_au * 1500000000
+                    planet_distance_km = planet_distance_au * 1500000000
                     days_of_rotation = sqrt(int(planet_distance_au) ** 3 / int(star_mass))
                     days_of_rotation = days_of_rotation * 365
                     system_list.append(round(days_of_rotation, 2))
-                    system_list.append(planet_distance_au)
+                    system_list.append(planet_distance_km)
                     x += 1
             print("system created")
             time_passed = False
-            pickle.dump(system_list,
-                        open(system_id + ".p", "wb"))  # if it doesnt exist, creates a file and dumps data in.
+            pickle.dump(system_list, open(system_id + ".p", "wb"))  # if it doesnt exist, creates a file and dumps data in.
         else:
             print("File found.")
             time_passed = True
@@ -1129,7 +1128,7 @@ class Universal:
                 x = False
                 y = True
 
-            body_distance = system_list[c] / 1500000000  # distance from sun in KM
+            body_distance = float(system_list[c]) / 1500000000  # distance from sun in KM
             body_radians = body_degree * (math.pi / 180)
             x_coord = math.sin(body_radians) * body_distance
             y_coord = math.cos(body_radians) * body_distance
@@ -1177,7 +1176,7 @@ class Universal:
         a = 0
         b = 2
         while a < len(system_list) / 3:
-            distance_au = system_list[b] / 1500000000
+            distance_au = float(system_list[b]) / 1500000000
             circle = plt.Circle((0, 0), distance_au, color='grey', fill=False)
             ax.add_artist(circle)
             a += 1
@@ -1194,7 +1193,7 @@ class Universal:
         while z < len(line_points) / 2:
             xx = line_points[a]
             yy = line_points[b]
-            distance_au = system_list[d] / 1500000000
+            distance_au = float(system_list[d]) / 1500000000
             angle = system_list[e]
             circle = plt.Circle((xx, yy), 0.2, color=colour_list[c])
             ax.add_artist(circle)
