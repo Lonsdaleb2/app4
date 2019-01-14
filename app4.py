@@ -842,6 +842,15 @@ class MGT2e:
             context.message.author.mention + " the local trader you have found will buy your goods for the following prices:\n"
             + selling_list_string)
 
+    
+
+
+client.add_cog(MGT2e())
+
+
+class Universal:
+    "Universal commands that don't rely on specific rules."
+
     @commands.command(name="UWP Translator",
                       description="Converts UWP numbers using the following format:\n "
                                   "Starport Planet-Size Atmosphere Hydroponics Population Government Law-Level Tech-Level",
@@ -996,14 +1005,11 @@ class MGT2e:
             await client.say(context.message.author.mention + ", your UWP code is incorrect. "
                                                               "```Please use the format: !uwp X X X X X X X X \n"
                                                               "\tEg. !uwp A 1 2 3 4 5 6 7```")
-
-
-client.add_cog(MGT2e())
-
-
-class Universal:
-    "Universal commands that don't rely on specific rules."
-
+    
+    
+    
+    
+    
     @commands.command(name="system map",
                     description="Generates a map of a solar system",
                     brief="!map - create or call a map",
