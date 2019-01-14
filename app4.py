@@ -1032,6 +1032,7 @@ class Universal:
             check = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
             check = check.content
             if check.lower() == "a":
+                x = 1
                 while x <= int(number_of_planets):
                     system_list.append(planet_start + random.randint(1, 359))
                     await client.say(context.message.author.mention + " How many days does planet number " + str(
@@ -1050,26 +1051,30 @@ class Universal:
                     context.message.author.mention + " What is the relative mass of the system's star? (Sol = 1)")
                 star_mass_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                 star_mass = star_mass_2.content
+                x = 1
                 while x <= int(number_of_planets):
                     system_list.append(planet_start + random.randint(1, 359))
                     await client.say(context.message.author.mention + " How many AU is planet " + str(
                         x) + " from the star? (1 AU = 1500mil km)")
                     planet_distance_au_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
                     planet_distance_au = planet_distance_au_2.content
-                    planet_distance_km = planet_distance_au * 1500000000
-                    days_of_rotation = sqrt(int(planet_distance_au) ** 3 / int(star_mass))
+                    planet_distance_km = float(planet_distance_au) * 1500000000
+                    days_of_rotation = sqrt((float(planet_distance_au)** 3) / float(star_mass))
                     days_of_rotation = days_of_rotation * 365
                     system_list.append(round(days_of_rotation, 2))
                     system_list.append(planet_distance_km)
                     x += 1
             print("system created")
             time_passed = False
-            pickle.dump(system_list, open(system_id + ".p", "wb"))  # if it doesnt exist, creates a file and dumps data in.
+            print(system_list)
+            pickle.dump(system_list,open(system_id + ".p", "wb"))  # if it doesnt exist, creates a file and dumps data in.
+            print("pickle dumped")
         else:
             print("File found.")
             time_passed = True
 
         system_list = pickle.load(open(system_id + ".p", "rb"))  # opens the persistent file to draw the data
+        print("Pickle file loaded")
 
         system_planets = system_list[0::3]
         system_orbit_time = system_list[1::3]
@@ -1082,14 +1087,12 @@ class Universal:
             x = 0
             y = 0
             while x < half_system_list:
-
                 orbit_degrees = (360 / (int(system_orbit_time[x]))) * (int(days))
                 degrees_1 = system_planets[x] + orbit_degrees
                 if degrees_1 >= 360:
                     degrees_1 = degrees_1 - 360  # when earth goes beyond 360 degrees, reset it to 0 for a new cycle.
                 system_planets[x] = degrees_1
                 system_list[y] = round(system_planets[x], 2)
-
                 y += 3
                 print(system_list)
                 x += 1
@@ -1115,14 +1118,17 @@ class Universal:
                 body_degree = body_degree
                 x = True
                 y = True
+
             elif 90 < body_degree <= 180:
                 body_degree = 180 - body_degree
                 x = True
                 y = False
+
             elif 180 < body_degree <= 270:
                 body_degree = 270 - body_degree
                 x = False
                 y = False
+
             elif 270 < body_degree <= 360:
                 body_degree = 360 - body_degree
                 x = False
@@ -1132,12 +1138,10 @@ class Universal:
             body_radians = body_degree * (math.pi / 180)
             x_coord = math.sin(body_radians) * body_distance
             y_coord = math.cos(body_radians) * body_distance
-
             if x == False:
                 x_coord = 0 - x_coord
             elif x == True:
                 x_coord = x_coord
-
             if y == False:
                 y_coord = 0 - y_coord
             elif y == True:
@@ -1149,6 +1153,7 @@ class Universal:
             b += 3
             c += 3
 
+            print(line_points)
         print(line_points)
 
         sun = plt.Circle((0, 0), 0.2, color='y')
@@ -1158,26 +1163,28 @@ class Universal:
         ax = plt.gca()
         ax.cla()
 
-        ax.set_xlim((-5, 5))
-        ax.set_ylim((-5, 5))
+
+        planet_distance_au = system_list[-1] / 1500000000
+        planet_chart = (planet_distance_au)+0.5
+
+        ax.set_xlim((0-planet_chart, planet_chart))
+        ax.set_ylim((0-planet_chart, planet_chart))
 
         ax.add_artist(sun)
-        ax.text(-6.5, 5.5, r"System: " + system_id, fontsize=9,
+        ax.text((-planet_chart-1.5), (planet_chart+0.5), r"System: " + system_id, fontsize=9,
                 bbox={'facecolor': 'white', 'edgecolor': 'black', 'pad': 5})
 
-        ax.text(5, 6, r"Orbit details:", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(-0.7, (planet_chart), r"0 degrees"+"\n"+"(Coreward)", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 2})
 
-        ax.text(-0.7, 5.5, r"0 degrees", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
-        ax.text(-0.7, 5, r"(Coreward)", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+        ax.text(-0.9, -(planet_chart+2), r"180 degrees"+"\n"+"(Rimward)", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 2})
 
-        ax.text(-0.8, -5.5, r"180 degrees", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
-        ax.text(-0.75, -6, r"(Rimward)", fontsize=8, bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+
 
         a = 0
         b = 2
         while a < len(system_list) / 3:
             distance_au = float(system_list[b]) / 1500000000
-            circle = plt.Circle((0, 0), distance_au, color='grey', fill=False)
+            circle = plt.Circle((0, 0), distance_au, color='grey', fill=False) #these are the orbit rings
             ax.add_artist(circle)
             a += 1
             b += 3
@@ -1188,27 +1195,33 @@ class Universal:
         c = 0
         d = 2
         e = 0
-        f = 5.5
-        colour_list = ["black", "green", "red", "blue", "pink", "red", "blue", "black", "green"]
-        while z < len(line_points) / 2:
+        f = -1
+        colour_list = ["black", "green", "red", "blue", "pink", "brown", "purple", "orange"]
+        planet_text=["Orbit details:\n"]
+        while z < len(line_points)/2:
             xx = line_points[a]
             yy = line_points[b]
             distance_au = float(system_list[d]) / 1500000000
             angle = system_list[e]
-            circle = plt.Circle((xx, yy), 0.2, color=colour_list[c])
+            circle = plt.Circle((xx, yy), 0.2, color=random.choice(colour_list))
             ax.add_artist(circle)
-            ax.text(3.5, f,
-                    r"Planet " + str(z + 1) + ": " + str(round(distance_au, 1)) + " AU @ " + str(angle) + " deg.",
-                    fontsize=8,
-                    bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 5})
+            planet_text.append("" + str(z + 1) + " : " + str(round(distance_au, 1)) + " AU @ " + str(angle) + " deg.\n")
+            #ax.text(planet_chart-1,planet_chart+f ,
+            #        r"Planet " + str(z + 1) + ": " + str(round(distance_au, 1)) + " AU @ " + str(angle) + " deg.",
+            #        fontsize=8,
+            #        bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 3})
 
             a += 2
             b += 2
             c += 1
             d += 3
             e += 3
-            f -= 0.5
+            f -= 1
             z += 1
+        planet_text = "".join(planet_text)
+        ax.text(planet_chart - 1, 0, r""+planet_text,fontsize=8,
+                    bbox={'facecolor': 'white', 'edgecolor': 'none', 'pad': 3})
+
 
         channel = context.message.channel
         fig.savefig(system_id + '_map.png')
