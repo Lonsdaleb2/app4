@@ -1161,7 +1161,7 @@ class Universal:
 
             print(line_points)
         print(line_points)
-
+        await asyncio.sleep(1)
         sun = plt.Circle((0, 0), 0.2, color='y')
 
         fig, ax = plt.subplots()
@@ -1202,7 +1202,7 @@ class Universal:
         d = 2
         e = 0
         f = -1
-        colour_list = ["black", "green", "red", "blue", "pink", "brown", "purple", "orange"]
+        colour_list = ["black", "green", "red", "blue", "brown", "purple"]
         planet_text=["Orbit details:\n"]
         while z < len(line_points)/2:
             xx = line_points[a]
@@ -1288,7 +1288,7 @@ class Universal:
                 sun_degrees = sun_degrees_highest - sun_degrees_lowest
                 print("both below")
             elif sun_degrees_highest >= 180 and sun_degrees_lowest <= 180:  # one above, one below
-                sun_degrees = (360 - sun_degrees_highest) + sun_degrees_lowest
+                sun_degrees = (360 - sun_degrees_lowest) - (360 - sun_degrees_highest)
                 print("one above one below")
             elif sun_degrees_highest > 180 and sun_degrees_lowest >= 180:  # both above 180
                 sun_degrees = (360 - sun_degrees_lowest) - (360 - sun_degrees_highest)
