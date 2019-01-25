@@ -992,20 +992,20 @@ class Universal:
         uwp_trade_codes = []
     
                 if any(i in atmostype for i in '456789') and any(i in hydro for i in '45678') and any(
-                i in population_amount for i in '567'):
+                i in pop for i in '567'):
             uwp_trade_codes.append("Ag")
         if any(i in plansize for i in '0') and any(i in atmostype for i in '0') and any(
-                i in hydrographic_perc for i in '0'):
+                i in hydro for i in '0'):
             uwp_trade_codes.append("As")
         if any(i in pop for i in '0') and any(i in gov for i in '0') and any(
-                i in law_output for i in '0'):
+                i in law for i in '0'):
             uwp_trade_codes.append("Ba")
         if any(i in atmostype for i in '23456789ABCDEF') and any(i in hydro for i in '0'):
             uwp_trade_codes.append("De")
         if any(i in atmostype for i in 'ABCDEF') and any(i in hydro for i in '123456789A'):
             uwp_trade_codes.append("Fl")
         if any(i in plansize for i in '678') and any(i in atmostype for i in '568') and any(
-                i in hydrographic_perc for i in '567'):
+                i in hydro for i in '567'):
             uwp_trade_codes.append("Ga")
         if any(i in pop for i in '9ABCDEF'):
             uwp_trade_codes.append("Hi")
@@ -1017,17 +1017,17 @@ class Universal:
             uwp_trade_codes.append("In")
         if any(i in pop for i in '0123'):
             uwp_trade_codes.append("Lo")
-        if any(i in tech_level for i in '012345'):
+        if any(i in tech for i in '012345'):
             uwp_trade_codes.append("Lt")
         if any(i in atmostype for i in '0123') and any(i in hydro for i in '0123') and any(
-                i in population_amount for i in '6789ABCDEF'):
+                i in pop for i in '6789ABCDEF'):
             uwp_trade_codes.append("Na")
         if any(i in pop for i in '0123456'):
             uwp_trade_codes.append("NI")
-        if any(i in atmosphere_type for i in '2345') and any(i in hydrographic_perc for i in '0123'):
+        if any(i in atmostype for i in '2345') and any(i in hydro for i in '0123'):
             uwp_trade_codes.append("Po")
         if any(i in atmostype for i in '68') and any(i in pop for i in '68') and any(
-                i in government_type for i in '456789'):
+                i in gov for i in '456789'):
             uwp_trade_codes.append("Ri")
         if any(i in atmostype for i in '0'):
             uwp_trade_codes.append("Va")
