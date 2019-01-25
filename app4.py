@@ -1043,7 +1043,7 @@ class Universal:
                       + "**Government**(" + gov + "): " + government + "\n"
                       + "**Law Level**(" + law + "): " + law_output + "\n"
                       + tech_output + "\n\n"
-                      + "**Trade Codes** : " + uwp_trade_codes )
+                      + "**Trade Codes** : " + str(uwp_trade_codes))
         
         
         await client.say(context.message.author.mention + uwp_output)  # print
