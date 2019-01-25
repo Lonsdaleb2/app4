@@ -860,6 +860,7 @@ class Universal:
     async def uwp(self, context, starqual, plansize, atmostype, hydro, pop, gov, law, tech):  # input variable
 
         starport_quality = {
+            "X": "None",
             "0": "None",
             "A": "Excellent: Refined Fuel, Full Shipyard, Full repairs",
             "B": "Good: Refined Fuel, Spacecraft Shipyard, Full repairs",
@@ -912,22 +913,22 @@ class Universal:
             "A": "96-100%",
         }
         population_amount = {
-            "0": "<10",
-            "1": "~100",
-            "2": "~1k",
-            "3": "~10k",
-            "4": "~100k",
-            "5": "~1 mil",
-            "6": "~10 mil",
-            "7": "~100 mil",
-            "8": "~1 bil",
-            "9": "~10 bil",
-            "A": "~100 bil",
-            "B": "~1 tril",
-            "C": "~10 tril",
-            "D": "~100 tril",
-            "E": "~1 quadril",
-            "F": "~10 quadril",
+            "0": "0",
+            "1": "~10",
+            "2": "~100",
+            "3": "~1k",
+            "4": "~10k",
+            "5": "~100k",
+            "6": "~1 mil",
+            "7": "~10 mil",
+            "8": "~100 mil",
+            "9": "~1 bil",
+            "A": "~10 bil",
+            "B": "~100 bil",
+            "C": "~1 tril",
+            "D": "~10 tril",
+            "E": "~100 tril",
+            "F": "~1 quadril",
         }
         government_type = {
             "0": "None, Contraband: None",
@@ -970,12 +971,12 @@ class Universal:
             "7": "**TL7**: Pre-Stellar - Reliable telecommunications satellites, Common computing",
             "8": "**TL8**: Pre-Stellar - Reaching other worlds, Space habitats, No terraforming",
             "9": "**TL9**: Pre-Stellar - Gravity manipulation, Jump drive, Colonising worlds",
-            "10": "**TL10**: Early Stellar - Visiting other systems, Orbital factories, Stable colonies",
-            "11": "**TL11**: Early Stellar - Early A.I, Space elevators, Jump-2 travel ",
-            "12": "**TL12**: Average Stellar - Weather manipulation, Plasma weapons, Fusion guns, Jump-3",
-            "13": "**TL13**: Average Stellar - Full battle armour, Cloning, Underwater spacecraft, Jump-4",
-            "14": "**Tl14**: Average Stellar - Man-portable fusion, Flying cities, Jump-5",
-            "15": "**TL15**: High Stellar - Synthetic anagathics, Black Globe technology, Jump-6"
+            "A": "**TL10**: Early Stellar - Visiting other systems, Orbital factories, Stable colonies",
+            "B": "**TL11**: Early Stellar - Early A.I, Space elevators, Jump-2 travel ",
+            "C": "**TL12**: Average Stellar - Weather manipulation, Plasma weapons, Fusion guns, Jump-3",
+            "D": "**TL13**: Average Stellar - Full battle armour, Cloning, Underwater spacecraft, Jump-4",
+            "E": "**Tl14**: Average Stellar - Man-portable fusion, Flying cities, Jump-5",
+            "F": "**TL15**: High Stellar - Synthetic anagathics, Black Globe technology, Jump-6"
         }
 
         starport = starport_quality.get(starqual)
@@ -987,6 +988,46 @@ class Universal:
         law_output = law_level.get(law)
         tech_output = tech_level.get(tech)
 
+        
+        uwp_trade_codes = []
+    
+        if any(i in atmosphere_type for i in '456789') and any(i in hydrographic_perc for i in '45678') and any(i in population_amount for i in '567'):
+            uwp_trade_codes.append("Ag")
+        if any(i in planet_size for i in '0') and any(i in atmosphere_type for i in '0') and any(i in hydrographic_perc for i in '0'):
+            uwp_trade_codes.append("As")
+        if any(i in population_amount for i in '0') and any(i in government_type for i in '0') and any(i in law_output for i in '0'):
+            uwp_trade_codes.append("Ba")
+        if any(i in atmosphere_type for i in '23456789ABCDEF') and any(i in hydrographic_perc for i in '0'):
+            uwp_trade_codes.append("De")
+        if any(i in atmosphere_type for i in 'ABCDEF') and any(i in hydrographic_perc for i in '123456789A'):
+            uwp_trade_codes.append("Fl")
+        if any(i in planet_size for i in '678') and any(i in atmosphere_type for i in '568') and any(i in hydrographic_perc for i in '567'):
+            uwp_trade_codes.append("Ga")
+        if any(i in population_amount for i in '9ABCDEF'):
+            uwp_trade_codes.append("Hi")
+        if any(i in tech_level for i in 'CDEF'):
+            uwp_trade_codes.append("Ht")            
+        if any(i in atmosphere_type for i in '01') and any(i in hydrographic_perc for i in '123456789A'):
+            uwp_trade_codes.append("Ie")           
+        if any(i in atmosphere_type for i in '012479') and any(i in population_amount for i in '9ABCDEF'):
+            uwp_trade_codes.append("In")    
+        if any(i in population_amount for i in '0123'):
+            uwp_trade_codes.append("Lo")   
+        if any(i in tech_level for i in '012345'):
+            uwp_trade_codes.append("Lt")
+        if any(i in atmosphere_type for i in '0123') and any(i in hydrographic_perc for i in '0123') and any(i in population_amount for i in '6789ABCDEF'): 
+            uwp_trade_codes.append("Na")            
+        if any(i in population_amount for i in '0123456'):
+            uwp_trade_codes.append("NI")
+        if any(i in atmosphere_type for i in '2345') and any(i in hydrographic_perc for i in '0123'):
+            uwp_trade_codes.append("Po")
+        if any(i in atmosphere_type for i in '68') and any(i in population_amount for i in '68') and any(i in government_type for i in '456789'):
+            uwp_trade_codes.append("Ri")
+        if any(i in atmosphere_type for i in '0'):    
+            uwp_trade_codes.append("Va")
+        if any(i in hydrographic_perc for i in 'A'):    
+            uwp_trade_codes.append("Wa")    
+        
         uwp_output = (", your UWP code:\n "
                       + "**Starport**(" + starqual + "): " + starport + "\n"
                       + "**Planet Info**(" + plansize + "): " + planet + "\n"
@@ -995,8 +1036,10 @@ class Universal:
                       + "**Population**(" + pop + "): " + population + "\n"
                       + "**Government**(" + gov + "): " + government + "\n"
                       + "**Law Level**(" + law + "): " + law_output + "\n"
-                      + tech_output)
-
+                      + tech_output + "\n\n"
+                      + "**Trade Codes** : " + uwp_trade_codes )
+        
+        
         await client.say(context.message.author.mention + uwp_output)  # print
 
     @uwp.error
