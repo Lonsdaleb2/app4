@@ -166,7 +166,8 @@ class MGT2e:
         await asyncio.sleep(1)
         user_input = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
         user_input_2 = user_input.content
-        user_list = user_input_2.split()
+        user_input_1 = user_input_2.title()
+        user_list = user_input_1.split()
 
         await client.say(context.message.author.mention + "\n"
                          + "What is your Broker skill modifier? -3/0/1/2...\n")
