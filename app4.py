@@ -642,9 +642,10 @@ class MGT2e:
                          + "Please enter your worlds Trade Codes below, separated by a space.\n")
         await asyncio.sleep(1)
         user_input_2 = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
-        user_input = user_input_2.content
-        user_list = user_input.split()
-
+        user_input_1 = user_input_2.content
+        user_list = user_input_1.split()
+        user_list = user_list.title()
+        
         await client.say(context.message.author.mention + "\n"
                          + "What is your Broker skill modifier?  -3/0/1/2... \n")
         await asyncio.sleep(1)
@@ -992,7 +993,7 @@ class Universal:
         
         uwp_trade_codes = []
     
-                if any(i in atmostype for i in '456789') and any(i in hydro for i in '45678') and any(
+        if any(i in atmostype for i in '456789') and any(i in hydro for i in '45678') and any(
                 i in pop for i in '567'):
             uwp_trade_codes.append("Ag")
         if any(i in plansize for i in '0') and any(i in atmostype for i in '0') and any(
