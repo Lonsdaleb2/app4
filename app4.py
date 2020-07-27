@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from math import *
 
 BOT_PREFIX = ("!")
-TOKEN = 'NTIxNjkyMTgwNzE3MjQwMzM0.DvEKQQ.Oc-wmzMhj4wHe6vb-F5r0AoPY6A'
+TOKEN = '##'
 
 client = Bot(command_prefix=BOT_PREFIX)
 server_time_check = datetime.datetime.now()
