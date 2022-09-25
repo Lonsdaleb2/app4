@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 load_dotenv()
 
 client = commands.Bot(command_prefix='!')
-token = 'NTIxNjkyMTgwNzE3MjQwMzM0.GrLASj.CgFZnjc01xccEcJ4T2VIdlp4muD4H28wkt02Tk'
+token = 'token'
 
 
 server_time_check = datetime.datetime.now()
